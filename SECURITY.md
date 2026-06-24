@@ -25,16 +25,20 @@ be exposed to the public internet.
 | Token guessing / timing attack | Constant-time comparison via `MessageDigest.isEqual` |
 | Cross-Site WebSocket Hijacking | Same-origin check on the `Origin` header during the handshake |
 | Malicious/compromised client flooding input | Per-connection rate limit (200 msg/s), 64 KB frame cap, 5 min idle timeout |
-| Credentials in the repo | Keystore/certs are git-ignored; keystore password read from `ORBION_KEYSTORE_PASSWORD` |
-| Eavesdropping on voice/text | Optional HTTPS/WSS profile (`start-https.bat`) |
+| Credentials in the repo | Keystore/certs are git-ignored; the HTTPS keystore is generated per-user under `~/.orbion` with a random password (`orbion.p12.pass`) |
+| Eavesdropping on voice/text | HTTPS/WSS **by default**, using a self-signed certificate auto-generated on first launch |
 
 ## Known limitations
 
 - The session token appears in the pairing URL and is shown on the desktop
   dashboard by design; treat the screen and any QR code as sensitive.
-- The default HTTPS certificate is **self-signed** and the default keystore
-  password is a placeholder — override `ORBION_KEYSTORE_PASSWORD` for anything
-  beyond local use.
+- HTTPS uses a **self-signed certificate** generated on first launch, so phones
+  show a one-time "connection is not private" warning that must be accepted.
+  This is expected for a private LAN tool – a publicly-trusted certificate
+  cannot be issued for a local IP address.
+- The installer is **not code-signed**, so Windows SmartScreen / Smart App
+  Control will warn or block it. This is a distribution/cost matter, not a code
+  issue; run from source (`java -jar target/orbion.jar`) to bypass it entirely.
 - Orbion is intended for a trusted LAN. Do **not** port-forward it or expose it
   to the internet.
 

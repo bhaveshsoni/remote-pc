@@ -24,6 +24,24 @@ run from source? See [Build & run](#build--run-development) below.
 > Releases are published when a version tag (e.g. `v1.0.0`) is pushed, so the
 > link above is empty until the first release is cut.
 
+### A note on Windows SmartScreen / Smart App Control
+
+The installer is **not code-signed** (a trusted certificate is a paid, identity-verified
+product). On Windows 11, **SmartScreen** shows a "Windows protected your PC" prompt –
+click **More info → Run anyway** – and **Smart App Control**, if enabled, may block the
+app outright with no override. This is normal for unsigned open-source software and says
+nothing about the code.
+
+The simplest way to run Orbion without any prompt is **from source**, because the JVM
+launcher (`java.exe`) is already signed by a trusted publisher:
+
+```bash
+mvn clean package
+java -jar target/orbion.jar
+```
+
+See [Build & run](#build--run-development) for details.
+
 ---
 
 ## How it works
