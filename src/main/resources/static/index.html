@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0a0a0c" />
+  <title>Orbion</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <main class="app">
+    <header class="header">
+      <h1 class="logo">Orbion</h1>
+      <div id="status" class="status status--off">
+        <span class="status__dot"></span>
+        <span id="status-text">Connecting…</span>
+      </div>
+    </header>
+
+    <div id="main-ui" class="main-ui">
+      <section class="transcript" id="transcript" aria-live="polite"></section>
+
+      <section class="voice">
+        <button id="mic" class="mic" aria-label="Voice command">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+            <line x1="12" y1="19" x2="12" y2="23"></line>
+          </svg>
+        </button>
+        <p class="voice__hint">Tap and speak: "accept", "reject", "go up"…</p>
+      </section>
+
+      <section class="dpad">
+        <button class="key dpad__up" data-key="UP" aria-label="Up">↑</button>
+        <button class="key dpad__left" data-key="LEFT" aria-label="Left">←</button>
+        <button class="key key--accent dpad__enter" data-key="ENTER">ENTER</button>
+        <button class="key dpad__right" data-key="RIGHT" aria-label="Right">→</button>
+        <button class="key dpad__down" data-key="DOWN" aria-label="Down">↓</button>
+      </section>
+
+      <section class="swipe-area" id="swipe-area">
+        <span class="swipe-area__hint">← swipe to switch windows →</span>
+      </section>
+
+      <section class="row">
+        <button class="key key--danger" data-key="ESC">ESC</button>
+        <button class="key" data-key="TAB">TAB</button>
+        <button class="key" data-key="SPACE">SPACE</button>
+      </section>
+    </div>
+
+    <section class="mousepad-toggle">
+      <button id="mousepad-btn" class="key key--mousepad">🖱 Mouse Pad</button>
+    </section>
+
+    <section id="mousepad-overlay" class="mousepad-overlay hidden">
+      <button id="mousepad-close" class="mousepad-close" aria-label="Close mouse pad">✕</button>
+      <div id="mousepad-area" class="mousepad-area">
+        <span class="mousepad-area__hint">Move finger to control cursor</span>
+      </div>
+      <div class="mousepad-clicks">
+        <button id="mouse-left" class="key mousepad-click">Left Click</button>
+        <button id="mouse-right" class="key mousepad-click">Right Click</button>
+      </div>
+    </section>
+
+    <section class="composer">
+      <input id="text-input" class="composer__input" type="text"
+             placeholder="Type a prompt, e.g. Run Java tests" autocomplete="off" />
+      <button id="send" class="composer__send">⌫</button>
+    </section>
+  </main>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
