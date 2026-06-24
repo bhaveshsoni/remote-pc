@@ -10,6 +10,22 @@ Control Claude Code, Cursor, VS Code, terminals and browsers from your phone. Ac
 
 ---
 
+## Download
+
+Grab the latest Windows installer from the **[Releases page](https://github.com/bhaveshsoni/remote-pc/releases/latest)**:
+
+➡️ **[Download `OrbionSetup.exe`](https://github.com/bhaveshsoni/remote-pc/releases/latest)**
+
+The installer bundles its own Java runtime, so **end users do not need Java installed**.
+Each release is built automatically on a Windows runner by the
+[release workflow](.github/workflows/release.yml). Prefer to build it yourself or
+run from source? See [Build & run](#build--run-development) below.
+
+> Releases are published when a version tag (e.g. `v1.0.0`) is pushed, so the
+> link above is empty until the first release is cut.
+
+---
+
 ## How it works
 
 1. Build and install Orbion on Windows (`OrbionSetup.exe`), or run it from source (see below).

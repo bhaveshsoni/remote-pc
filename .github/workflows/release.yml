@@ -1,0 +1,100 @@
+name: Release
+
+# Builds OrbionSetup.exe (with a bundled Java runtime) and attaches it to a
+# GitHub Release. Triggered when you push a version tag like "v1.0.0", or
+# manually from the Actions tab.
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to build (numeric, e.g. 1.0.0)'
+        required: true
+        default: '1.0.0'
+
+permissions:
+  contents: write   # required to create the Release and upload assets
+
+jobs:
+  installer:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Resolve version
+        id: ver
+        shell: pwsh
+        run: |
+          if ($env:GITHUB_REF -like 'refs/tags/*') {
+            $v = $env:GITHUB_REF -replace '^refs/tags/v?', ''
+          } else {
+            $v = '${{ github.event.inputs.version }}'
+          }
+          "version=$v" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          Write-Host "Resolved version: $v"
+
+      - name: Build jar
+        run: mvn -B -ntp clean package -DskipTests
+
+      - name: Stage jar for jpackage
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path staging | Out-Null
+          Copy-Item target/orbion.jar staging/orbion.jar
+
+      - name: Ensure WiX Toolset (needed by jpackage --type exe)
+        shell: pwsh
+        run: |
+          if (-not (Get-Command candle.exe -ErrorAction SilentlyContinue)) {
+            Write-Host "WiX not found on runner; installing via Chocolatey..."
+            choco install wixtoolset -y --no-progress
+            "$env:WIX\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
+          } else {
+            Write-Host "WiX Toolset already present."
+          }
+
+      - name: Build OrbionSetup.exe
+        shell: pwsh
+        run: |
+          jpackage `
+            --type exe `
+            --name Orbion `
+            --app-version ${{ steps.ver.outputs.version }} `
+            --vendor Orbion `
+            --description "Mobile-first remote control for AI tools" `
+            --input staging `
+            --main-jar orbion.jar `
+            --java-options "-Djava.awt.headless=false" `
+            --win-menu `
+            --win-shortcut `
+            --win-dir-chooser `
+            --dest dist
+          $exe = Get-ChildItem dist/*.exe | Select-Object -First 1
+          Rename-Item $exe.FullName 'OrbionSetup.exe'
+          Get-ChildItem dist
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: OrbionSetup
+          path: dist/OrbionSetup.exe
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Orbion ${{ steps.ver.outputs.version }}
+          tag_name: ${{ github.ref_type == 'tag' && github.ref_name || format('v{0}', steps.ver.outputs.version) }}
+          files: dist/OrbionSetup.exe
+          generate_release_notes: true
+          fail_on_unmatched_files: true
