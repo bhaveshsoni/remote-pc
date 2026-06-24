@@ -12,7 +12,7 @@ Control Claude Code, Cursor, VS Code, terminals and browsers from your phone. Ac
 
 ## How it works
 
-1. Install Orbion on Windows (`OrbionSetup.exe`).
+1. Build and install Orbion on Windows (`OrbionSetup.exe`), or run it from source (see below).
 2. Orbion launches into the system tray and opens its dashboard.
 3. The dashboard shows a **QR code** containing a secure pairing URL.
 4. Scan it with your phone – the mobile UI opens in your browser.
@@ -21,6 +21,11 @@ Control Claude Code, Cursor, VS Code, terminals and browsers from your phone. Ac
 ```
 Phone (mobile web UI)  ⇄  WebSocket  ⇄  Orbion desktop (Spring Boot)  ⇄  Java Robot API  ⇄  Focused app
 ```
+
+> **Note:** `OrbionSetup.exe` is not shipped in this repository – it is a build
+> artifact. Produce it yourself with [`build-installer.bat`](#build-the-windows-installer)
+> (output lands in `dist/`, which is git-ignored), or skip the installer entirely
+> and run from source with Maven (see [Build & run](#build--run-development)).
 
 ## Features
 
