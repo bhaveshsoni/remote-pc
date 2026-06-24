@@ -40,6 +40,12 @@
             <artifactId>javase</artifactId>
             <version>3.5.3</version>
         </dependency>
+        <!-- Generates the self-signed HTTPS certificate at runtime (no keytool needed). -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk18on</artifactId>
+            <version>1.78.1</version>
+        </dependency>
     </dependencies>
 
     <build>

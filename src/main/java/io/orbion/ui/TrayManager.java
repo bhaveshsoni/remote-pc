@@ -46,21 +46,23 @@ public class TrayManager {
 
     private final SessionService sessionService;
     private final QrCodeService qrCodeService;
+    private final io.orbion.core.SslCustomizer sslCustomizer;
 
     private JFrame frame;
     private JLabel devicesLabel;
     private JTextArea commandsArea;
 
-    public TrayManager(SessionService sessionService, QrCodeService qrCodeService) {
+    public TrayManager(SessionService sessionService, QrCodeService qrCodeService,
+                       io.orbion.core.SslCustomizer sslCustomizer) {
         this.sessionService = sessionService;
         this.qrCodeService = qrCodeService;
+        this.sslCustomizer = sslCustomizer;
     }
 
     @EventListener
     public void onServerStarted(WebServerInitializedEvent event) {
         int port = event.getWebServer().getPort();
-        boolean ssl = event.getApplicationContext().getEnvironment()
-                .getProperty("server.ssl.key-store") != null;
+        boolean ssl = sslCustomizer.isSslEnabled();
         String pairingUrl = sessionService.pairingUrl(ssl ? "https" : "http", port);
         log.info("========================================");
         log.info("Orbion is running");

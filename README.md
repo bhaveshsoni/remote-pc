@@ -61,7 +61,7 @@ Phone (mobile web UI)  ⇄  WebSocket  ⇄  Orbion desktop (Spring Boot)  ⇄  J
 - The handshake enforces a **same-origin check** on the `Origin` header, mitigating Cross-Site WebSocket Hijacking.
 - Per-connection **rate limiting** and a **64 KB frame cap** bound the impact of a misbehaving client; idle sockets time out after 5 minutes.
 - Local network only – nothing leaves your LAN.
-- The HTTPS keystore (`orbion.p12`) is **generated locally** by `start-https.bat` and is **excluded from version control** via `.gitignore`. Its password is read from the `ORBION_KEYSTORE_PASSWORD` environment variable. Never commit certificates, keystores or `.env` files to the repository.
+- Orbion serves over **HTTPS** using a **self-signed certificate generated automatically on first launch** and stored under `~/.orbion/orbion.p12`, protected by a per-install random password (`~/.orbion/orbion.p12.pass`). Nothing certificate-related is committed to the repository (`.gitignore` excludes `*.p12`/`*.key`). Because the certificate is self-signed, the phone shows a one-time browser warning to accept.
 
 See [SECURITY.md](SECURITY.md) for the full threat model and reporting process.
 
@@ -147,20 +147,22 @@ Endpoint: `ws://<ip>:8080/ws?token=<session-token>`
 
 ## Enable voice mode (HTTPS)
 
-Browsers only allow microphone access on **secure origins**, so voice does not work over plain `http://<wifi-ip>`. To enable it:
+Browsers only allow microphone access on **secure origins**. Orbion now serves over
+**HTTPS automatically** – a self-signed certificate is generated on first launch and
+stored under `~/.orbion`, so **voice works straight from the installer** with no extra steps.
 
-```bat
-start-https.bat
-```
+The first time a phone connects, the browser shows a one-time "your connection is not
+private" warning (because the certificate is self-signed). Tap **Advanced → Proceed**,
+then tap the mic and allow microphone access. The warning won't reappear on that device.
 
-This generates a self-signed certificate (`orbion.p12`) on first run and starts Orbion on `https://<ip>:8443`. Re-scan the QR code, accept the browser's certificate warning once (Advanced → Proceed), then tap the mic – the permission prompt will now appear.
-
-Alternative without HTTPS (Chrome on Android only): open `chrome://flags/#unsafely-treat-insecure-origin-as-secure`, add `http://<your-pc-ip>:8080`, and relaunch Chrome.
+> Running from source? `java -jar target/orbion.jar` already enables HTTPS the same way.
+> `start-https.bat` remains only as a convenience for generating a keystore with `keytool`
+> on the project directory and is no longer required for voice.
 
 ## Troubleshooting
 
 - **Phone can't connect** – ensure both devices are on the same network and Windows Firewall allows Java. Orbion prefers port `8080` (or `8443` in HTTPS mode); if that port is already in use it **automatically falls back to a free port**, so always use the exact pairing URL/QR code shown on the dashboard rather than assuming `8080`.
-- **Voice not working** – use `start-https.bat` (see "Enable voice mode" above); the Web Speech API requires Chrome/Edge on Android or Safari on iOS.
+- **Voice not working** – accept the one-time certificate warning in the phone browser (Advanced → Proceed) so the page loads over HTTPS, then allow microphone access. The Web Speech API requires Chrome/Edge on Android or Safari on iOS.
 - **Keys not registering** – the target app must have focus on the desktop.
 - **Headless server** – the web server still runs; tray, dashboard and key simulation are disabled.
 
