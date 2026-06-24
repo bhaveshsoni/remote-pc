@@ -159,7 +159,7 @@ Alternative without HTTPS (Chrome on Android only): open `chrome://flags/#unsafe
 
 ## Troubleshooting
 
-- **Phone can't connect** – ensure both devices are on the same network and Windows Firewall allows Java on port 8080 (or 8443 in HTTPS mode).
+- **Phone can't connect** – ensure both devices are on the same network and Windows Firewall allows Java. Orbion prefers port `8080` (or `8443` in HTTPS mode); if that port is already in use it **automatically falls back to a free port**, so always use the exact pairing URL/QR code shown on the dashboard rather than assuming `8080`.
 - **Voice not working** – use `start-https.bat` (see "Enable voice mode" above); the Web Speech API requires Chrome/Edge on Android or Safari on iOS.
 - **Keys not registering** – the target app must have focus on the desktop.
 - **Headless server** – the web server still runs; tray, dashboard and key simulation are disabled.
